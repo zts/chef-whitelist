@@ -49,7 +49,12 @@ class Chef
     #
     # Returns true if the node is in the whitelist and false otherwise
     def is_in_whitelist?(whitelist, data_bag="whitelist", attribute="patterns")
-        the_bag = data_bag_item(data_bag, whitelist)
+        begin
+          the_bag = data_bag_item(data_bag, whitelist)
+        rescue
+          Chef::Log.debug "Whitelist data_bags/#{data_bag}/#{whitelist} not found"
+          the_bag = {}
+        end
         patterns = the_bag[attribute] || []
 
         patterns.each do |pattern|
